@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Расшифровка AES</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+	<style>
+	body {
+	      font-family: 'Comic Sans MS', cursive; /* Выберите праздничный шрифт */
+	      background-color: #f0f0f0; /* Лаконичный фон */
+	      overflow: hidden; /* Скрытие скроллбара при падающем снеге */
+	    }
+	
+	    #decryptedText {
+	      margin-top: 20px;
+	      padding: 100px;
+	      background-color: #fff;
+	      border-radius: 10px;
+	      text-align: center;
+	    }
+	
+	    /* Анимация падающего снега */
+	    .snowflake {
+	      position: absolute;
+	      display: block;
+	      width: 10px;
+	      height: 10px;
+	      background-color: #fff;
+	      border-radius: 50%;
+	      pointer-events: none;
+	      animation: snowflakes linear infinite;
+	      transform: translate3d(0, -100vh, 0);
+	    }
+	
+	    @keyframes snowflakes {
+	      0% {
+	        transform: translate3d(0, -100vh, 0) rotate(0deg);
+	      }
+	      100% {
+	        transform: translate3d(100vw, 100vh, 0) rotate(360deg);
+	      }
+	    }
+	</style>
+	<style type="text/css">
+	#garland {position: absolute; top: 0; left: 0; background-image: url("https://www.expertplus.ru/UserFiles/Image/content/new_year/04_1.png"); height: 36px; width: 100%; overflow: hidden; z-index: 99;}
+
+				#nums_1 {padding: 100px;}
+
+				.garland_1 {background-position: 0 0;}
+
+				.garland_2 {background-position: 0 -36px;}
+
+				.garland_3 {background-position: 0 -72px;}
+
+				.garland_4 {background-position: 0 -108px;}
+
+				.garland_image{position: absolute; top: 0; left: 0;}
+ 
+				.garland_image img{border: 0;}
+	</style>
+</head>
+
+<body>
+	<div id="decryptedText"></div>
+	<script>
+	function decryptWithCode() {
+	      let enteredCode;
+	      let isCodeCorrect = false;
+	
+	      while (!isCodeCorrect) {
+	        enteredCode = prompt("Введите код:");
+	
+	        if (enteredCode === null) {
+	          alert("Для дешифровки необходимо ввести код!");
+	        } else {
+	          const hashedCode = CryptoJS.MD5(enteredCode).toString();
+	          const secretHash = "670410c236fdc36d2a5767215da7607d";
+	
+	          if (hashedCode === secretHash) {
+	            isCodeCorrect = true;
+	          } else {
+	            alert("Неверный код! Попробуйте снова.");
+	          }
+	        }
+	      }
+	
+	      const ciphertext = 'fnhpNctz/hrDLyvic6cCpSuK2b7SaOGRuwE/rHk1tD8E14wloU1j67FOBRBSMs+XOMJ8JEe5+lB51ny4cIBobAelPWiJCAEctL0/3Y3qfIIQ8Azqt8Matibcp/0mhcjOq0jQz4OTYycyRDFZmYxdH/CXKJllsNoWZkKLIOu6HpaV6xm7evn68hjSf9eVvapfDKGCWkJK6MuIXCtwg1jv/e/Mg0HRtYF7RJ8tzN3Up1EpS08nPEhUFvKlwp9aGLZFcL/S7R5SDQjME3vDV7VFrRZLhFh5AA2pBu11LuAchNzv3LNEWGgW7ErgNY04ayHKLc+pKZq7Kz7zHowxA4exFQ4aSWkF650MNWRWioIi+esZfJrIBxw2QHyeRyGQy1qpli71AivVrqlVxf15/SOJEV432YdnhNpEpsz4gqo13ETSQ85BUs6qxS3OQ/Vba6tUuEhTEEY/DFkCcWT7b41baRoKq5iY2ped5IetpEFNlX4mWJZDjWxfMpN8+ImH4zgzwgGnXBfcQoPZFrC40k9J8J0YPMGOREie9aGIkG80Rx6+23hnrl4TeYgb2VYy0AINPsJeftAUqKPQJPyXIzIHBUrQ5/eglinn/tGoFWh6IzMW5y49jtROsQD65BsoPo+egWYzpQxv3mmmarpJ4QmWN1SOP7Yi+S6bqBSBo4D/ic7Xl/tTUj4RBbjlHyZ9SEVmWVsy8lDvdrl491XMXLP/YE7TAK2G1pU1ge5C8t7+2HvpQp6He4fJoK/4T97K++vgVmr8ih8z16SGn9LtVNml1oimBoioSGqMUvWrWz9OGJmHu3rWbd/dyl/9mDvqsKYzG+rmJSV7K/pzLvLyyXSO6GHq+J++0iWNUX/l1tAL0mUiiEm8F3Lo8lnqmjfuyKG9ko9IFzga+t2qjI7zk1j7ArooFGBF22vAZw2EGsOXrLLr9J+frirml/dGBV53b9ehvRO/vD8bNe4gxbuWv9zZF+oA9IPriYtIkrWE+fC6+b6KeCvgkknLEoeYpjM4UXJ4VZyHibQwgcU3zSki+sVdR4MSSHFalOAQ9qDhgHb+f3RbCubNNMor9WMPMzIiHUtEhmBOB7K36RfHDkEMszaiUs2PIJ0aZGRtEBZ/27rA8jcpEqAlzn0R+QnRIT7TfF2E4l7KIMwhufld58VyH6VinYl5EMnENJ/Gkd47n7fSRqkL2aNqW7wsTW//47gafRx8ErhuWnzTiZR9viLB/4CO3ys8yM0xCeEFyR9RNlLCiGsJ4vjfF4ysqxX+CdeyzxL2ouI6UBt93/JougaAeM46F+B20e/72171dLHSXNbUWANVHVY4ZaHI19eEgLIaqU3EsccmFvaD/zbQjMMKzV6Ox2se9yynRry+R4/0ksmkORM/IsrdFc8XxxR9fkMRFIXPsNSZgZsR1RiRv5Fz6uOHNX9UeT+6SiRCbBgK57H7x/mjYfw26pMh00jspmyq8nYlfZHsmus2wJwstpuB/dlu9g=='; // Ваш шифр-текст
+	
+	      try {
+	        const key = CryptoJS.enc.Utf8.parse(enteredCode);
+	        const decrypted = CryptoJS.AES.decrypt({
+	          ciphertext: CryptoJS.enc.Base64.parse(ciphertext)
+	        }, key, {
+	          iv: CryptoJS.enc.Hex.parse('0000000000000000'), // Инициализирующий вектор (IV) - в данном случае, 16 байт (128 бит) нулей
+	          mode: CryptoJS.mode.CBC,
+	          padding: CryptoJS.pad.Pkcs7
+	        });
+	
+	        const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);
+	
+	        if (decryptedText) {
+	          document.getElementById('decryptedText').innerText = decryptedText;
+	        } else {
+	          document.getElementById('decryptedText').innerText = "Текст не расшифрован.";
+	        }
+	      } catch (error) {
+	        alert("Произошла ошибка при дешифровании: " + error.message);
+	      }
+	    }
+	
+	    window.onload = function() {
+	      decryptWithCode();
+	    };
+	// Добавление эффекта падающего снега
+	      for (let i = 0; i < 50; i++) {
+	        const snowflake = document.createElement('div');
+	        snowflake.classList.add('snowflake');
+	        snowflake.style.left = Math.random() * window.innerWidth + 'px';
+	        snowflake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+	        document.body.appendChild(snowflake);
+	      }
+	</script>
+	<script>
+	var div = document.createElement('div');
+ 
+				div.innerHTML = '<div id="garland"><div id="nums_1">1</div></div><div class="garland_image"><img src="https://www.expertplus.ru/UserFiles/Image/content/new_year/07.png"></div>';
+
+				document.body.insertBefore(div, document.body.firstChild);
+ 
+			
+
+				function garland()
+
+				{
+
+						nums = document.getElementById('nums_1').innerHTML;
+
+						if(nums == 1){document.getElementById('garland').className='garland_1';document.getElementById('nums_1').innerHTML='2'};
+
+						if(nums == 2){document.getElementById('garland').className='garland_2';document.getElementById('nums_1').innerHTML='3'};
+
+						if(nums == 3){document.getElementById('garland').className='garland_3';document.getElementById('nums_1').innerHTML='4'};
+
+						if(nums == 4){document.getElementById('garland').className='garland_4';document.getElementById('nums_1').innerHTML='1'};
+
+				}
+
+				setInterval(function(){garland()}, 600);
+	</script>
+	<script src="https://www.expertplus.ru/UserFiles/Image/content/new_year/07.js"></script>
+<script>
+
+				var SNOW_Picture = "https://www.expertplus.ru/UserFiles/Image/content/new_year/08.png"; // ссылка на изображение снежинки
+
+				var SNOW_Width = "55px"; // ширина изображения снежинки
+
+				var SNOW_Height = "55px"; // высота изображения снежинки
+
+				var SNOW_no = 99; // максимальное количество снежинок на странице одновременно
+
+		</script>
+
+		
+
+		<script src="https://www.expertplus.ru/UserFiles/Image/content/new_year/08.js"></script>
+</body>
+
+</html>
